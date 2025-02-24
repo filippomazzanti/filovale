@@ -1,12 +1,12 @@
 // Configurazione Firebase (METTI I TUOI DATI QUI!)
 const firebaseConfig = {
-    apiKey: "TUO_API_KEY",
-    authDomain: "TUO_PROJECT_ID.firebaseapp.com",
-    databaseURL: "https://TUO_PROJECT_ID.firebaseio.com",
-    projectId: "TUO_PROJECT_ID",
-    storageBucket: "TUO_PROJECT_ID.appspot.com",
-    messagingSenderId: "TUO_MESSAGING_SENDER_ID",
-    appId: "TUO_APP_ID"
+  apiKey: "AIzaSyBZJQU5F9WlxNuqOjo8HE5NKi-iiaGiTFQ",
+  authDomain: "filo-e-vale.firebaseapp.com",
+  projectId: "filo-e-vale",
+  storageBucket: "filo-e-vale.firebasestorage.app",
+  messagingSenderId: "593118517860",
+  appId: "1:593118517860:web:1c37411efed6b089be1d71",
+  measurementId: "G-JDXM99D8EX"
 };
 
 // Inizializza Firebase
