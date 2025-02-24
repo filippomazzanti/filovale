@@ -2,7 +2,7 @@
 const firebaseConfig = {
   apiKey: "AIzaSyBZJQU5F9WlxNuqOjo8HE5NKi-iiaGiTFQ",
   authDomain: "filo-e-vale.firebaseapp.com",
-  databaseURL: "https://filo-e-vale-default-rtdb.europe-west1.firebasedatabase.app",  // Usa l'URL giusto con la regione
+databaseURL: "https://filo-e-vale-default-rtdb.europe-west1.firebasedatabase.app",
   projectId: "filo-e-vale",
   storageBucket: "filo-e-vale.firebasestorage.app",
   messagingSenderId: "593118517860",
