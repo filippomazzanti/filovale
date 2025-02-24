@@ -3,52 +3,22 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Firebase App</title>
-  <!-- Aggiungi i CDN di Firebase -->
-  <script src="https://www.gstatic.com/firebasejs/9.10.0/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.10.0/firebase-database.js"></script>
+  <title>Contatore Condiviso ❤️</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="manifest" href="manifest.json">
 </head>
 <body>
+  <div class="container">
+    <h1>Contatore Condiviso ❤️</h1>
+    <p id="counter">0</p>
+    <button id="increase">+1</button>
+    <button id="decrease">-1</button>
+    <button id="reset">Reset</button>
+  </div>
 
-  <h1>Contatore</h1>
-  <button id="increaseBtn">+1</button>
-  <p id="counter">0</p>
-
-  <script>
-    // Configurazione Firebase (aggiungi le tue chiavi reali)
-const firebaseConfig = {
-  apiKey: "AIzaSyBZJQU5F9WlxNuqOjo8HE5NKi-iiaGiTFQ",
-  authDomain: "filo-e-vale.firebaseapp.com",
-databaseURL: "https://filo-e-vale-default-rtdb.europe-west1.firebasedatabase.app",
-  projectId: "filo-e-vale",
-  storageBucket: "filo-e-vale.firebasestorage.app",
-  messagingSenderId: "593118517860",
-  appId: "1:593118517860:web:1c37411efed6b089be1d71",
-  measurementId: "G-JDXM99D8EX"
-};
-
-    // Inizializza Firebase
-    firebase.initializeApp(firebaseConfig);
-
-    // Riferimento al database
-    const database = firebase.database();
-
-    // Riferimento al contatore nel database
-    const counterRef = database.ref('counter');
-
-    // Funzione per aggiornare il contatore
-    document.getElementById('increaseBtn').addEventListener('click', function() {
-      counterRef.transaction(function(currentValue) {
-        return (currentValue || 0) + 1;
-      });
-    });
-
-    // Rileva i cambiamenti del contatore e aggiornalo nel UI
-    counterRef.on('value', function(snapshot) {
-      const count = snapshot.val();
-      document.getElementById('counter').textContent = count;
-    });
-  </script>
-
-</body>
-</html>
+  <!-- Includi Firebase versione 8 -->
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+  
+  <!-- Il tuo file JavaScript -->
+  <script src="script.js"></
