@@ -1,6 +1,6 @@
 {
-  "name": "Counter Sync",
-  "short_name": "Counter",
+  "name": "Contatore Condiviso",
+  "short_name": "Contatore",
   "start_url": "index.html",
   "display": "standalone",
   "background_color": "#ffffff",
