@@ -1,27 +1,53 @@
 <!DOCTYPE html>
 <html lang="it">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Counter Sync</title>
-    <link rel="stylesheet" href="style.css">
-    <link rel="manifest" href="manifest.json">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Firebase App</title>
+  <!-- Aggiungi i CDN di Firebase -->
+  <script src="https://www.gstatic.com/firebasejs/9.10.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.10.0/firebase-database.js"></script>
 </head>
 <body>
-    <div class="container">
-        <h1>Contatore Condiviso ❤️</h1>
-        <p id="counter">0</p>
-        <button id="increase">+1</button>
-        <button id="decrease">-1</button>
-        <button id="reset">Reset</button>
-    </div>
 
-    <!-- Includi Firebase versione 8.x.x -->
-    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+  <h1>Contatore</h1>
+  <button id="increaseBtn">+1</button>
+  <p id="counter">0</p>
 
-    <!-- Il tuo file script.js -->
-    <script src="script.js"></script>
+  <script>
+    // Configurazione Firebase (aggiungi le tue chiavi reali)
+    const firebaseConfig = {
+      apiKey: "TUA_API_KEY",
+      authDomain: "tuo-project-id.firebaseapp.com",
+      databaseURL: "https://filo-e-vale-default-rtdb.europe-west1.firebasedatabase.app", // Usa il tuo URL del database
+      projectId: "tuo-project-id",
+      storageBucket: "tuo-project-id.appspot.com",
+      messagingSenderId: "tuo-sender-id",
+      appId: "tuo-app-id"
+    };
+
+    // Inizializza Firebase
+    firebase.initializeApp(firebaseConfig);
+
+    // Riferimento al database
+    const database = firebase.database();
+
+    // Riferimento al contatore nel database
+    const counterRef = database.ref('counter');
+
+    // Funzione per aggiornare il contatore
+    document.getElementById('increaseBtn').addEventListener('click', function() {
+      counterRef.transaction(function(currentValue) {
+        return (currentValue || 0) + 1;
+      });
+    });
+
+    // Rileva i cambiamenti del contatore e aggiornalo nel UI
+    counterRef.on('value', function(snapshot) {
+      const count = snapshot.val();
+      document.getElementById('counter').textContent = count;
+    });
+  </script>
+
 </body>
 </html>
-
