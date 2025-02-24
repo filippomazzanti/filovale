@@ -10,39 +10,37 @@ databaseURL: "https://filo-e-vale-default-rtdb.europe-west1.firebasedatabase.app
   measurementId: "G-JDXM99D8EX"
 };
 
+
 // Inizializza Firebase
 firebase.initializeApp(firebaseConfig);
-const database = firebase.database();
-const counterRef = database.ref("counter");
 
-// Elementi HTML
-const counter = document.getElementById("counter");
-const increaseBtn = document.getElementById("increase");
-const decreaseBtn = document.getElementById("decrease");
-const resetBtn = document.getElementById("reset");
+// Riferimento al Realtime Database
+var database = firebase.database();
+
+// Riferimento al nodo "counter"
+var counterRef = database.ref('counter');
 
 // Aggiorna il contatore in tempo reale
-counterRef.on("value", (snapshot) => {
-    counter.innerText = snapshot.val() ?? 0;
+counterRef.on('value', function(snapshot) {
+  var value = snapshot.val();
+  document.getElementById('counter').innerText = value !== null ? value : 0;
 });
 
 // Aumenta il contatore
-increaseBtn.addEventListener("click", () => {
-    counterRef.get().then(snapshot => {
-        let newValue = (snapshot.val() ?? 0) + 1;
-        counterRef.set(newValue);
-    });
+document.getElementById('increase').addEventListener('click', function() {
+  counterRef.transaction(function(currentValue) {
+    return (currentValue || 0) + 1;
+  });
 });
 
 // Diminuisce il contatore
-decreaseBtn.addEventListener("click", () => {
-    counterRef.get().then(snapshot => {
-        let newValue = (snapshot.val() ?? 0) - 1;
-        counterRef.set(newValue);
-    });
+document.getElementById('decrease').addEventListener('click', function() {
+  counterRef.transaction(function(currentValue) {
+    return (currentValue || 0) - 1;
+  });
 });
 
 // Resetta il contatore
-resetBtn.addEventListener("click", () => {
-    counterRef.set(0);
+document.getElementById('reset').addEventListener('click', function() {
+  counterRef.set(0);
 });
