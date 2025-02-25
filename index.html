@@ -10,6 +10,7 @@
 <body>
   <div class="container">
     <h1>Contatore Condiviso ❤️</h1>
+    
     <div class="counter-container">
       <div class="counter" id="counter-vale">
         <h2>Vale</h2>
@@ -26,10 +27,12 @@
         <button class="btn reset" id="filo-reset">Reset Filo</button>
       </div>
     </div>
+    
     <div class="accumulated">
       <h2>Sigarette accumulate</h2>
       <p id="accumulated-value">0</p>
     </div>
+    
     <div class="chat-container">
       <h2>Chat</h2>
       <div id="chat-messages"></div>
@@ -44,7 +47,20 @@
   <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
   
-  <!-- Il tuo file JavaScript -->
+  <!-- Il file JavaScript -->
   <script src="script.js"></script>
+  
+  <!-- Registrazione del Service Worker per eventuali notifiche push (se necessario) -->
+  <script>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('sw.js')
+        .then(function(reg) {
+          console.log('Service Worker registrato con successo!', reg);
+        })
+        .catch(function(err) {
+          console.error('Errore nella registrazione del Service Worker:', err);
+        });
+    }
+  </script>
 </body>
 </html>
