@@ -10,12 +10,36 @@
 <body>
   <div class="container">
     <h1>Contatore Condiviso ❤️</h1>
-    <p id="counter">0</p>
-    <button id="increase">+1</button>
-    <button id="decrease">-1</button>
-    <button id="reset">Reset</button>
+    <div class="counter-container">
+      <div class="counter" id="counter-vale">
+        <h2>Vale</h2>
+        <p class="counter-value" id="vale-value">0</p>
+        <button class="btn" id="vale-increase">+1</button>
+        <button class="btn" id="vale-decrease">-1</button>
+        <button class="btn reset" id="vale-reset">Reset Vale</button>
+      </div>
+      <div class="counter" id="counter-filo">
+        <h2>Filo</h2>
+        <p class="counter-value" id="filo-value">0</p>
+        <button class="btn" id="filo-increase">+1</button>
+        <button class="btn" id="filo-decrease">-1</button>
+        <button class="btn reset" id="filo-reset">Reset Filo</button>
+      </div>
+    </div>
+    <div class="accumulated">
+      <h2>Sigarette accumulate</h2>
+      <p id="accumulated-value">0</p>
+    </div>
+    <div class="chat-container">
+      <h2>Chat</h2>
+      <div id="chat-messages"></div>
+      <form id="chat-form">
+        <input type="text" id="chat-input" placeholder="Scrivi un messaggio..." required>
+        <button type="submit">Invia</button>
+      </form>
+    </div>
   </div>
-
+  
   <!-- Includi Firebase versione 8 -->
   <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
