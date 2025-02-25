@@ -19,6 +19,50 @@ h1 {
   color: #333;
 }
 
+/* Schermata di Login */
+#login-container {
+  max-width: 400px;
+  margin: 100px auto;
+  padding: 30px;
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+#login-container input,
+#login-container select {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 15px;
+  font-size: 1em;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  transition: border 0.3s ease;
+}
+
+#login-container input:focus,
+#login-container select:focus {
+  border-color: #007BFF;
+  outline: none;
+}
+
+#login-btn {
+  width: 100%;
+  padding: 12px;
+  font-size: 1em;
+  border: none;
+  background: #007BFF;
+  color: white;
+  cursor: pointer;
+  border-radius: 5px;
+  transition: background 0.3s ease;
+}
+
+#login-btn:hover {
+  background: #0056b3;
+}
+
+/* Contatori */
 .counter-container {
   display: flex;
   justify-content: space-around;
@@ -52,10 +96,12 @@ h1 {
   color: white;
   cursor: pointer;
   border-radius: 5px;
+  transition: background 0.3s ease, transform 0.2s ease;
 }
 
 .btn:hover {
   background: #0056b3;
+  transform: scale(1.05);
 }
 
 .btn.reset {
@@ -148,4 +194,19 @@ h1 {
   font-size: 0.8em;
   color: #999;
   margin-left: 10px;
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+  .counter-container {
+    flex-direction: column;
+    align-items: center;
+  }
+  .counter {
+    width: 90%;
+  }
+  #login-container {
+    margin: 50px auto;
+    width: 90%;
+  }
 }
