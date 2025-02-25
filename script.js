@@ -40,93 +40,16 @@ document.addEventListener("DOMContentLoaded", function () {
     firebase.initializeApp(firebaseConfig);
     var database = firebase.database();
 
-    // Riferimenti per i contatori e per il totale accumulato
-    var valeRef = database.ref('vale');
-    var filoRef = database.ref('filo');
-    var accumulatedRef = database.ref('accumulated');
-
     // Riferimento per la chat
     var chatRef = database.ref('chat');
 
-    // Richiesta permesso notifiche
-    function requestNotificationPermission() {
-        if (Notification.permission !== 'granted') {
-            Notification.requestPermission().then(function(permission) {
-                if (permission === 'granted') {
-                    console.log("Notifiche abilitate!");
-                }
-            });
+    // Funzionalità Clear Chat
+    document.getElementById('clear-chat').addEventListener('click', function () {
+        if (confirm("Sei sicuro di voler cancellare tutta la chat?")) {
+            chatRef.remove(); // Rimuove tutti i messaggi dalla chat in Firebase
+            document.getElementById('chat-messages').innerHTML = ''; // Pulisce la chat dal DOM
         }
-    }
-    document.addEventListener("DOMContentLoaded", requestNotificationPermission);
-
-    // Aggiornamento per i contatori
-    valeRef.once('value', function(snapshot) {
-        var value = snapshot.val() || 0;
-        document.getElementById('vale-value').innerText = value;
     });
-
-    filoRef.once('value', function(snapshot) {
-        var value = snapshot.val() || 0;
-        document.getElementById('filo-value').innerText = value;
-    });
-
-    // Aggiornamento del totale accumulato
-    accumulatedRef.once('value', function(snapshot) {
-        var value = snapshot.val() || 0;
-        document.getElementById('accumulated-value').innerText = value;
-    });
-
-    // Eventi per Vale
-    document.getElementById('vale-increase').addEventListener('click', function() {
-        valeRef.transaction(function(currentValue) {
-            return (currentValue || 0) + 1;
-        });
-    });
-
-    document.getElementById('vale-decrease').addEventListener('click', function() {
-        valeRef.transaction(function(currentValue) {
-            return (currentValue || 0) - 1;
-        });
-    });
-
-    document.getElementById('vale-reset').addEventListener('click', function() {
-        valeRef.once('value').then(function(snapshot) {
-            var currentVal = snapshot.val() || 0;
-            accumulatedRef.transaction(function(currentTotal) {
-                return (currentTotal || 0) + currentVal;
-            });
-            valeRef.set(0);
-        });
-    });
-
-    // Eventi per Filo
-    document.getElementById('filo-increase').addEventListener('click', function() {
-        filoRef.transaction(function(currentValue) {
-            return (currentValue || 0) + 1;
-        });
-    });
-
-    document.getElementById('filo-decrease').addEventListener('click', function() {
-        filoRef.transaction(function(currentValue) {
-            return (currentValue || 0) - 1;
-        });
-    });
-
-    document.getElementById('filo-reset').addEventListener('click', function() {
-        filoRef.once('value').then(function(snapshot) {
-            var currentVal = snapshot.val() || 0;
-            accumulatedRef.transaction(function(currentTotal) {
-                return (currentTotal || 0) + currentVal;
-            });
-            filoRef.set(0);
-        });
-    });
-
-    // Funzionalità Chat
-    var chatMessagesDiv = document.getElementById('chat-messages');
-    var chatForm = document.getElementById('chat-form');
-    var chatInput = document.getElementById('chat-input');
 
     // Ascolta l'aggiunta di nuovi messaggi
     let lastMessageTimestamp = 0;
@@ -140,6 +63,9 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 
     // Invio di un nuovo messaggio
+    var chatForm = document.getElementById('chat-form');
+    var chatInput = document.getElementById('chat-input');
+
     chatForm.addEventListener('submit', function(e) {
         e.preventDefault();
         var text = chatInput.value.trim();
@@ -160,7 +86,7 @@ document.addEventListener("DOMContentLoaded", function () {
         var timeString = time.toLocaleTimeString();
         messageDiv.innerHTML = '<span class="message-text">' + data.text + '</span>' +
                                '<span class="message-time">' + timeString + '</span>';
-        chatMessagesDiv.appendChild(messageDiv);
-        chatMessagesDiv.scrollTop = chatMessagesDiv.scrollHeight;
+        document.getElementById('chat-messages').appendChild(messageDiv);
+        document.getElementById('chat-messages').scrollTop = document.getElementById('chat-messages').scrollHeight;
     }
 });
