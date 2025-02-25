@@ -44,7 +44,7 @@ document.addEventListener("DOMContentLoaded", function() {
     event.preventDefault();
 
     const pin = document.getElementById('pin').value;
-    // Usa il select per l'utente, non un input di testo
+    // Usa il select per l'utente
     const selectedUser = document.getElementById('user-select').value;
 
     // Verifica PIN per Filo o Vale
@@ -172,7 +172,7 @@ document.addEventListener("DOMContentLoaded", function() {
   }
 });
 
-// Notifiche
+// Notifiche standard
 function requestNotificationPermission() {
   if (Notification.permission !== 'granted') {
     Notification.requestPermission().then(function(permission) {
@@ -183,3 +183,31 @@ function requestNotificationPermission() {
   }
 }
 document.addEventListener("DOMContentLoaded", requestNotificationPermission);
+
+// Firebase Cloud Messaging per notifiche push
+if (firebase.messaging && firebase.messaging.isSupported()) {
+  const messaging = firebase.messaging();
+
+  messaging.requestPermission()
+    .then(function() {
+      console.log('Permesso per le notifiche concesso.');
+      return messaging.getToken();
+    })
+    .then(function(token) {
+      console.log('FCM Token:', token);
+      // Invia il token al server se necessario
+    })
+    .catch(function(err) {
+      console.error('Impossibile ottenere il permesso per le notifiche.', err);
+    });
+
+  messaging.onMessage(function(payload) {
+    console.log('Messaggio in arrivo:', payload);
+    if (Notification.permission === 'granted') {
+      new Notification(payload.notification.title, {
+        body: payload.notification.body,
+        icon: payload.notification.icon || 'icon.png'
+      });
+    }
+  });
+}
