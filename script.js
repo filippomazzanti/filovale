@@ -22,10 +22,19 @@ var accumulatedRef = database.ref('accumulated');
 // Riferimento per la chat
 var chatRef = database.ref('chat');
 
-// Variabili per l'accesso
+// Variabile per l'utente loggato
 var loggedInUser = null;
 
 document.addEventListener("DOMContentLoaded", function() {
+
+  // Se l'utente è già loggato, ripristina lo stato
+  if (localStorage.getItem('loggedInUser')) {
+    loggedInUser = localStorage.getItem('loggedInUser');
+    document.getElementById('login-container').style.display = 'none';
+    document.getElementById('counter-container').style.display = 'block';
+    setupChat();
+  }
+
   // Gestione del login
   const loginForm = document.getElementById('login-form');
   const loginError = document.getElementById('login-error');
@@ -35,42 +44,88 @@ document.addEventListener("DOMContentLoaded", function() {
     event.preventDefault();
 
     const pin = document.getElementById('pin').value;
-    const username = document.getElementById('username').value;
+    // Usa il select per l'utente, non un input di testo
+    const selectedUser = document.getElementById('user-select').value;
 
     // Verifica PIN per Filo o Vale
-    if (username.toLowerCase() === "filo" && pin === "25042004") {
+    if (selectedUser === "filo" && pin === "25042004") {
       loggedInUser = "Filo";
-    } else if (username.toLowerCase() === "vale" && pin === "10062004") {
+    } else if (selectedUser === "vale" && pin === "10062004") {
       loggedInUser = "Vale";
     } else {
       loginError.style.display = 'block';
       return;
     }
 
-    // Mostra il contenitore dei contatori
+    // Salva l'utente nel localStorage per mantenere la sessione
+    localStorage.setItem('loggedInUser', loggedInUser);
+
+    // Mostra il contenitore dei contatori e nascondi il login
     loginError.style.display = 'none';
     document.getElementById('login-container').style.display = 'none';
     counterContainer.style.display = 'block';
-    updateChatUsername();
+
+    setupChat();
   });
 
-  // Funzione per aggiornare il nome utente nella chat
-  function updateChatUsername() {
-    var chatInput = document.getElementById('chat-input');
-    var chatForm = document.getElementById('chat-form');
-    chatForm.addEventListener('submit', function(e) {
-      e.preventDefault();
-      var text = chatInput.value.trim();
-      if (text !== '') {
-        var newMessageRef = chatRef.push();
-        newMessageRef.set({
-          text: loggedInUser + ": " + text,
-          timestamp: firebase.database.ServerValue.TIMESTAMP
-        });
-        chatInput.value = '';
-      }
+  // Configurazione degli event listener per i contatori di Vale
+  document.getElementById('vale-increase').addEventListener('click', function() {
+    valeRef.transaction(function(currentValue) {
+      return (currentValue || 0) + 1;
     });
-  }
+  });
+
+  document.getElementById('vale-decrease').addEventListener('click', function() {
+    valeRef.transaction(function(currentValue) {
+      return (currentValue || 0) - 1;
+    });
+  });
+
+  document.getElementById('vale-reset').addEventListener('click', function() {
+    valeRef.once('value').then(function(snapshot) {
+      var currentVal = snapshot.val() || 0;
+      accumulatedRef.transaction(function(currentAccumulated) {
+        return (currentAccumulated || 0) + currentVal;
+      });
+      valeRef.set(0);
+    });
+  });
+
+  // Configurazione degli event listener per i contatori di Filo
+  document.getElementById('filo-increase').addEventListener('click', function() {
+    filoRef.transaction(function(currentValue) {
+      return (currentValue || 0) + 1;
+    });
+  });
+
+  document.getElementById('filo-decrease').addEventListener('click', function() {
+    filoRef.transaction(function(currentValue) {
+      return (currentValue || 0) - 1;
+    });
+  });
+
+  document.getElementById('filo-reset').addEventListener('click', function() {
+    filoRef.once('value').then(function(snapshot) {
+      var currentVal = snapshot.val() || 0;
+      accumulatedRef.transaction(function(currentAccumulated) {
+        return (currentAccumulated || 0) + currentVal;
+      });
+      filoRef.set(0);
+    });
+  });
+
+  // Aggiornamento in tempo reale dei valori dei contatori
+  valeRef.on('value', function(snapshot) {
+    document.getElementById('vale-value').innerText = snapshot.val() || 0;
+  });
+
+  filoRef.on('value', function(snapshot) {
+    document.getElementById('filo-value').innerText = snapshot.val() || 0;
+  });
+
+  accumulatedRef.on('value', function(snapshot) {
+    document.getElementById('accumulated-value').innerText = snapshot.val() || 0;
+  });
 
   // Funzione per cancellare la chat
   document.getElementById('clear-chat-btn').addEventListener('click', function() {
@@ -78,7 +133,7 @@ document.addEventListener("DOMContentLoaded", function() {
     document.getElementById('chat-messages').innerHTML = '';
   });
 
-  // Visualizza i messaggi della chat
+  // Visualizzazione dei messaggi della chat
   chatRef.on('child_added', function(snapshot) {
     var messageData = snapshot.val();
     displayChatMessage(messageData);
@@ -93,6 +148,27 @@ document.addEventListener("DOMContentLoaded", function() {
     messageDiv.innerHTML = '<span class="message-text">' + data.text + '</span>' +
                            '<span class="message-time">' + timeString + '</span>';
     document.getElementById('chat-messages').appendChild(messageDiv);
+  }
+
+  // Funzione per configurare la chat (aggiunge l'evento submit al form)
+  function setupChat() {
+    var chatForm = document.getElementById('chat-form');
+    // Rimuoviamo eventuali listener duplicati
+    chatForm.replaceWith(chatForm.cloneNode(true));
+    chatForm = document.getElementById('chat-form');
+    chatForm.addEventListener('submit', function(e) {
+      e.preventDefault();
+      var chatInput = document.getElementById('chat-input');
+      var text = chatInput.value.trim();
+      if (text !== '') {
+        var newMessageRef = chatRef.push();
+        newMessageRef.set({
+          text: loggedInUser + ": " + text,
+          timestamp: firebase.database.ServerValue.TIMESTAMP
+        });
+        chatInput.value = '';
+      }
+    });
   }
 });
 
