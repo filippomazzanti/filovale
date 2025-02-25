@@ -10,20 +10,27 @@
   <!-- <link rel="icon" href="favicon.ico" type="image/x-icon"> -->
 </head>
 <body>
+  <!-- Schermata di Login -->
   <div id="login-container">
       <h2>Accedi</h2>
       <form id="login-form">
-          <input type="text" id="username" placeholder="Nome utente" />
-          <input type="password" id="pin" placeholder="PIN" />
+          <label for="user-select">Seleziona utente:</label>
+          <select id="user-select">
+              <option value="filo">Filo</option>
+              <option value="vale">Vale</option>
+          </select>
+          <input type="password" id="pin" placeholder="PIN" autocomplete="current-password" />
           <button id="login-btn" type="submit">Login</button>
       </form>
       <div id="login-error" style="display: none; color: red;">PIN errato!</div>
   </div>
 
+  <!-- App (visibile dopo il login) -->
   <div class="container" id="counter-container" style="display: none;">
     <h1>Contatore Condiviso ❤️</h1>
     
     <div class="counter-container">
+      <!-- Contatore di Vale -->
       <div class="counter" id="counter-vale">
         <h2>Vale</h2>
         <p class="counter-value" id="vale-value">0</p>
@@ -31,6 +38,7 @@
         <button class="btn" id="vale-decrease">-1</button>
         <button class="btn reset" id="vale-reset">Reset Vale</button>
       </div>
+      <!-- Contatore di Filo -->
       <div class="counter" id="counter-filo">
         <h2>Filo</h2>
         <p class="counter-value" id="filo-value">0</p>
@@ -45,14 +53,15 @@
       <p id="accumulated-value">0</p>
     </div>
     
+    <!-- Sezione Chat -->
     <div class="chat-container">
       <h2>Chat</h2>
       <div id="chat-messages"></div>
       <form id="chat-form">
         <input type="text" id="chat-input" placeholder="Scrivi un messaggio..." required>
-        <button type="submit">Invia</button>
+        <button type="submit" class="btn">Invia</button>
       </form>
-      <button id="clear-chat-btn">Clear Chat</button>
+      <button id="clear-chat-btn" class="btn">Clear Chat</button>
     </div>
   </div>
   
