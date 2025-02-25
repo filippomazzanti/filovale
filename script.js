@@ -10,10 +10,18 @@ document.addEventListener("DOMContentLoaded", function () {
         if (validPins[username] === pin) {
             currentUser = username;
             localStorage.setItem("currentUser", username); // Salva l'utente nel localStorage
-            document.getElementById("login-container").style.display = "none"; // Nasconde la pagina di login
-            document.getElementById("app-container").style.display = "block"; // Mostra l'app
+            const loginContainer = document.getElementById("login-container");
+            const appContainer = document.getElementById("app-container");
+
+            if (loginContainer && appContainer) {
+                loginContainer.style.display = "none"; // Nasconde la pagina di login
+                appContainer.style.display = "block"; // Mostra l'app
+            }
         } else {
-            document.getElementById("login-error").style.display = "block"; // Mostra l'errore se il PIN non è valido
+            const loginError = document.getElementById("login-error");
+            if (loginError) {
+                loginError.style.display = "block"; // Mostra l'errore se il PIN non è valido
+            }
         }
     }
 
@@ -21,12 +29,22 @@ document.addEventListener("DOMContentLoaded", function () {
     const savedUser = localStorage.getItem("currentUser");
     if (savedUser) {
         currentUser = savedUser;
-        document.getElementById("login-container").style.display = "none"; // Nasconde la pagina di login
-        document.getElementById("app-container").style.display = "block"; // Mostra l'app
+        const loginContainer = document.getElementById("login-container");
+        const appContainer = document.getElementById("app-container");
+
+        if (loginContainer && appContainer) {
+            loginContainer.style.display = "none"; // Nasconde la pagina di login
+            appContainer.style.display = "block"; // Mostra l'app
+        }
     } else {
         // Se l'utente non è loggato, mostra la pagina di login
-        document.getElementById("login-container").style.display = "block";
-        document.getElementById("app-container").style.display = "none";
+        const loginContainer = document.getElementById("login-container");
+        const appContainer = document.getElementById("app-container");
+
+        if (loginContainer && appContainer) {
+            loginContainer.style.display = "block";
+            appContainer.style.display = "none";
+        }
     }
 
     // Gestione evento del login
