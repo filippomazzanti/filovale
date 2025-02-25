@@ -8,22 +8,7 @@
   <link rel="manifest" href="manifest.json">
 </head>
 <body>
-  <!-- Login Screen -->
-  <div id="login-container">
-    <h1>Accedi</h1>
-    <label for="username">Chi sei?</label>
-    <select id="username">
-      <option value="filo">Filo</option>
-      <option value="vale">Vale</option>
-    </select>
-    <label for="pin">Inserisci il PIN:</label>
-    <input type="password" id="pin">
-    <button id="login-btn">Accedi</button>
-    <p id="login-error" style="color: red; display: none;">PIN errato!</p>
-  </div>
-
-  <!-- Main App -->
-  <div class="container" id="app-container" style="display: none;">
+  <div class="container">
     <h1>Contatore Condiviso ❤️</h1>
     
     <div class="counter-container">
@@ -55,9 +40,10 @@
         <input type="text" id="chat-input" placeholder="Scrivi un messaggio..." required>
         <button type="submit">Invia</button>
       </form>
+      <button id="clear-chat" class="btn reset">Clear Chat</button> <!-- Pulsante Clear Chat -->
     </div>
   </div>
-
+  
   <!-- Includi Firebase versione 8 -->
   <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
