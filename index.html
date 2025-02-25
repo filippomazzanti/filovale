@@ -1,67 +1,66 @@
 <!DOCTYPE html>
 <html lang="it">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Contatore Condiviso ❤️</title>
-  <link rel="stylesheet" href="style.css">
-  <link rel="manifest" href="manifest.json">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contatore Condiviso</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="manifest" href="manifest.json">
 </head>
 <body>
-  <div class="container">
-    <h1>Contatore Condiviso ❤️</h1>
-    
-    <div class="counter-container">
-      <div class="counter" id="counter-vale">
-        <h2>Vale</h2>
-        <p class="counter-value" id="vale-value">0</p>
-        <button class="btn" id="vale-increase">+1</button>
-        <button class="btn" id="vale-decrease">-1</button>
-        <button class="btn reset" id="vale-reset">Reset Vale</button>
-      </div>
-      <div class="counter" id="counter-filo">
-        <h2>Filo</h2>
-        <p class="counter-value" id="filo-value">0</p>
-        <button class="btn" id="filo-increase">+1</button>
-        <button class="btn" id="filo-decrease">-1</button>
-        <button class="btn reset" id="filo-reset">Reset Filo</button>
-      </div>
+    <!-- Login Section -->
+    <div id="login-container">
+        <h2>Accedi</h2>
+        <input type="text" id="username" placeholder="Nome utente" />
+        <input type="password" id="pin" placeholder="PIN" />
+        <button id="login-btn">Login</button>
+        <div id="login-error" style="display: none; color: red;">PIN errato!</div>
     </div>
-    
-    <div class="accumulated">
-      <h2>Sigarette accumulate</h2>
-      <p id="accumulated-value">0</p>
+
+    <!-- App Section -->
+    <div id="app-container" style="display: none;">
+        <div class="container">
+            <h1>Contatore Condiviso</h1>
+            <div class="counter-container">
+                <!-- Vale Counter -->
+                <div class="counter">
+                    <h2>Vale</h2>
+                    <div id="vale-value" class="counter-value">0</div>
+                    <button id="vale-increase" class="btn">Aumenta</button>
+                    <button id="vale-decrease" class="btn">Diminuisci</button>
+                    <button id="vale-reset" class="btn reset">Resetta</button>
+                </div>
+
+                <!-- Filo Counter -->
+                <div class="counter">
+                    <h2>Filo</h2>
+                    <div id="filo-value" class="counter-value">0</div>
+                    <button id="filo-increase" class="btn">Aumenta</button>
+                    <button id="filo-decrease" class="btn">Diminuisci</button>
+                    <button id="filo-reset" class="btn reset">Resetta</button>
+                </div>
+            </div>
+
+            <div class="accumulated">
+                <h2>Totale Accumulato</h2>
+                <div id="accumulated-value">0</div>
+            </div>
+
+            <!-- Chat Section -->
+            <div class="chat-container">
+                <h2>Chat</h2>
+                <div id="chat-messages"></div>
+                <form id="chat-form">
+                    <input type="text" id="chat-input" placeholder="Scrivi un messaggio" />
+                    <button type="submit">Invia</button>
+                </form>
+                <button id="clear-chat">Pulisci Chat</button>
+            </div>
+        </div>
     </div>
-    
-    <div class="chat-container">
-      <h2>Chat</h2>
-      <div id="chat-messages"></div>
-      <form id="chat-form">
-        <input type="text" id="chat-input" placeholder="Scrivi un messaggio..." required>
-        <button type="submit">Invia</button>
-      </form>
-      <button id="clear-chat" class="btn reset">Clear Chat</button> <!-- Pulsante Clear Chat -->
-    </div>
-  </div>
-  
-  <!-- Includi Firebase versione 8 -->
-  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
-  
-  <!-- Il file JavaScript -->
-  <script src="script.js"></script>
-  
-  <!-- Registrazione del Service Worker per eventuali notifiche push (se necessario) -->
-  <script>
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('sw.js')
-        .then(function(reg) {
-          console.log('Service Worker registrato con successo!', reg);
-        })
-        .catch(function(err) {
-          console.error('Errore nella registrazione del Service Worker:', err);
-        });
-    }
-  </script>
+
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database.js"></script>
+    <script src="script.js"></script>
 </body>
 </html>
