@@ -6,7 +6,7 @@
   <title>Contatore Condiviso ❤️</title>
   <link rel="stylesheet" href="style.css">
   <link rel="manifest" href="manifest.json">
-  <!-- Favicon (opzionale, rimuovi se non hai il file favicon.ico) -->
+  <!-- Favicon (opzionale) -->
   <!-- <link rel="icon" href="favicon.ico" type="image/x-icon"> -->
 </head>
 <body>
@@ -65,14 +65,15 @@
     </div>
   </div>
   
-  <!-- Firebase Script (versione 8) -->
+  <!-- Firebase Scripts -->
   <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-messaging.js"></script>
   
-  <!-- Il file JavaScript -->
+  <!-- Il nostro script -->
   <script src="script.js"></script>
   
-  <!-- Service Worker (per notifiche push) -->
+  <!-- Registrazione del Service Worker -->
   <script>
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.register('sw.js')
