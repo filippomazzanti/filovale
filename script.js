@@ -1,121 +1,109 @@
-document.addEventListener("DOMContentLoaded", function () {
-    let currentUser = null;
+// Configurazione Firebase
+const firebaseConfig = {
+  apiKey: "AIzaSyBZJQU5F9WlxNuqOjo8HE5NKi-iiaGiTFQ",
+  authDomain: "filo-e-vale.firebaseapp.com",
+  databaseURL: "https://filo-e-vale-default-rtdb.europe-west1.firebasedatabase.app",
+  projectId: "filo-e-vale",
+  storageBucket: "filo-e-vale.firebasestorage.app",
+  messagingSenderId: "593118517860",
+  appId: "1:593118517860:web:1c37411efed6b089be1d71",
+  measurementId: "G-JDXM99D8EX"
+};
 
-    // Funzione di login
-    function handleLogin() {
-        const username = document.getElementById("username").value;
-        const pin = document.getElementById("pin").value;
-        const validPins = { filo: "25042004", vale: "10062004" };
+// Inizializza Firebase
+firebase.initializeApp(firebaseConfig);
+var database = firebase.database();
 
-        if (validPins[username] === pin) {
-            currentUser = username;
-            localStorage.setItem("currentUser", username); // Salva l'utente nel localStorage
-            const loginContainer = document.getElementById("login-container");
-            const appContainer = document.getElementById("app-container");
+// Riferimenti per i contatori e per il totale accumulato
+var valeRef = database.ref('vale');
+var filoRef = database.ref('filo');
+var accumulatedRef = database.ref('accumulated');
 
-            if (loginContainer && appContainer) {
-                loginContainer.style.display = "none"; // Nasconde la pagina di login
-                appContainer.style.display = "block"; // Mostra l'app
-            }
-        } else {
-            const loginError = document.getElementById("login-error");
-            if (loginError) {
-                loginError.style.display = "block"; // Mostra l'errore se il PIN non è valido
-            }
-        }
-    }
+// Riferimento per la chat
+var chatRef = database.ref('chat');
 
-    // Controlla se l'utente è già loggato (utilizzando il localStorage)
-    const savedUser = localStorage.getItem("currentUser");
-    if (savedUser) {
-        currentUser = savedUser;
-        const loginContainer = document.getElementById("login-container");
-        const appContainer = document.getElementById("app-container");
+// Variabili per l'accesso
+var loggedInUser = null;
 
-        if (loginContainer && appContainer) {
-            loginContainer.style.display = "none"; // Nasconde la pagina di login
-            appContainer.style.display = "block"; // Mostra l'app
-        }
+document.addEventListener("DOMContentLoaded", function() {
+  // Gestione del login
+  const loginForm = document.getElementById('login-form');
+  const loginError = document.getElementById('login-error');
+  const counterContainer = document.getElementById('counter-container');
+
+  loginForm.addEventListener('submit', function(event) {
+    event.preventDefault();
+
+    const pin = document.getElementById('pin').value;
+    const username = document.getElementById('username').value;
+
+    // Verifica PIN per Filo o Vale
+    if (username.toLowerCase() === "filo" && pin === "25042004") {
+      loggedInUser = "Filo";
+    } else if (username.toLowerCase() === "vale" && pin === "10062004") {
+      loggedInUser = "Vale";
     } else {
-        // Se l'utente non è loggato, mostra la pagina di login
-        const loginContainer = document.getElementById("login-container");
-        const appContainer = document.getElementById("app-container");
-
-        if (loginContainer && appContainer) {
-            loginContainer.style.display = "block";
-            appContainer.style.display = "none";
-        }
+      loginError.style.display = 'block';
+      return;
     }
 
-    // Gestione evento del login
-    const loginButton = document.getElementById("login-btn");
-    if (loginButton) {
-        loginButton.addEventListener("click", handleLogin); // Aggiungi l'evento solo quando il pulsante esiste
-    }
+    // Mostra il contenitore dei contatori
+    loginError.style.display = 'none';
+    document.getElementById('login-container').style.display = 'none';
+    counterContainer.style.display = 'block';
+    updateChatUsername();
+  });
 
-    // Firebase config e inizializzazione
-    const firebaseConfig = {
-        apiKey: "AIzaSyBZJQU5F9WlxNuqOjo8HE5NKi-iiaGiTFQ",
-        authDomain: "filo-e-vale.firebaseapp.com",
-        databaseURL: "https://filo-e-vale-default-rtdb.europe-west1.firebasedatabase.app",
-        projectId: "filo-e-vale",
-        storageBucket: "filo-e-vale.firebasestorage.app",
-        messagingSenderId: "593118517860",
-        appId: "1:593118517860:web:1c37411efed6b089be1d71",
-        measurementId: "G-JDXM99D8EX"
-    };
-
-    // Inizializza Firebase
-    firebase.initializeApp(firebaseConfig);
-    var database = firebase.database();
-
-    // Riferimento per la chat
-    var chatRef = database.ref('chat');
-
-    // Funzionalità Clear Chat
-    document.getElementById('clear-chat').addEventListener('click', function () {
-        if (confirm("Sei sicuro di voler cancellare tutta la chat?")) {
-            chatRef.remove(); // Rimuove tutti i messaggi dalla chat in Firebase
-            document.getElementById('chat-messages').innerHTML = ''; // Pulisce la chat dal DOM
-        }
-    });
-
-    // Ascolta l'aggiunta di nuovi messaggi
-    let lastMessageTimestamp = 0;
-
-    chatRef.orderByChild("timestamp").on('child_added', function(snapshot) {
-        var messageData = snapshot.val();
-        if (messageData.timestamp > lastMessageTimestamp) {
-            displayChatMessage(messageData);
-            lastMessageTimestamp = messageData.timestamp;
-        }
-    });
-
-    // Invio di un nuovo messaggio
-    var chatForm = document.getElementById('chat-form');
+  // Funzione per aggiornare il nome utente nella chat
+  function updateChatUsername() {
     var chatInput = document.getElementById('chat-input');
-
+    var chatForm = document.getElementById('chat-form');
     chatForm.addEventListener('submit', function(e) {
-        e.preventDefault();
-        var text = chatInput.value.trim();
-        if (text !== '' && currentUser) {
-            var newMessageRef = chatRef.push();
-            newMessageRef.set({
-                text: currentUser.charAt(0).toUpperCase() + currentUser.slice(1) + ": " + text,
-                timestamp: firebase.database.ServerValue.TIMESTAMP
-            });
-            chatInput.value = '';
-        }
+      e.preventDefault();
+      var text = chatInput.value.trim();
+      if (text !== '') {
+        var newMessageRef = chatRef.push();
+        newMessageRef.set({
+          text: loggedInUser + ": " + text,
+          timestamp: firebase.database.ServerValue.TIMESTAMP
+        });
+        chatInput.value = '';
+      }
     });
+  }
 
-    function displayChatMessage(data) {
-        var messageDiv = document.createElement('div');
-        messageDiv.className = 'message';
-        var time = new Date(data.timestamp);
-        var timeString = time.toLocaleTimeString();
-        messageDiv.innerHTML = '<span class="message-text">' + data.text + '</span>' +
-                               '<span class="message-time">' + timeString + '</span>';
-        document.getElementById('chat-messages').appendChild(messageDiv);
-        document.getElementById('chat-messages').scrollTop = document.getElementById('chat-messages').scrollHeight;
-    }
+  // Funzione per cancellare la chat
+  document.getElementById('clear-chat-btn').addEventListener('click', function() {
+    chatRef.remove();
+    document.getElementById('chat-messages').innerHTML = '';
+  });
+
+  // Visualizza i messaggi della chat
+  chatRef.on('child_added', function(snapshot) {
+    var messageData = snapshot.val();
+    displayChatMessage(messageData);
+  });
+
+  // Funzione per visualizzare un messaggio della chat
+  function displayChatMessage(data) {
+    var messageDiv = document.createElement('div');
+    messageDiv.className = 'message';
+    var time = new Date(data.timestamp);
+    var timeString = time.toLocaleTimeString();
+    messageDiv.innerHTML = '<span class="message-text">' + data.text + '</span>' +
+                           '<span class="message-time">' + timeString + '</span>';
+    document.getElementById('chat-messages').appendChild(messageDiv);
+  }
 });
+
+// Notifiche
+function requestNotificationPermission() {
+  if (Notification.permission !== 'granted') {
+    Notification.requestPermission().then(function(permission) {
+      if (permission === 'granted') {
+        console.log("Notifiche abilitate!");
+      }
+    });
+  }
+}
+document.addEventListener("DOMContentLoaded", requestNotificationPermission);
