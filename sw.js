@@ -19,7 +19,7 @@ self.addEventListener("fetch", (event) => {
         })
     );
 });
-// Service Worker per le notifiche push
+
 self.addEventListener('push', function(event) {
     var data = event.data.json();
     self.registration.showNotification(data.title, {
