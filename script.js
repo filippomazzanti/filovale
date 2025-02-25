@@ -22,17 +22,43 @@ var accumulatedRef = database.ref('accumulated');
 // Riferimento per la chat
 var chatRef = database.ref('chat');
 
-// Ascoltatori per aggiornare i contatori in tempo reale
+// Richiesta permesso notifiche
+function requestNotificationPermission() {
+  if (Notification.permission !== 'granted') {
+    Notification.requestPermission().then(function(permission) {
+      if (permission === 'granted') {
+        console.log("Notifiche abilitate!");
+      }
+    });
+  }
+}
+document.addEventListener("DOMContentLoaded", requestNotificationPermission);
+
+// Aggiornamento e notifica per il contatore di Vale
 valeRef.on('value', function(snapshot) {
   var value = snapshot.val() || 0;
   document.getElementById('vale-value').innerText = value;
+  if (Notification.permission === 'granted') {
+    new Notification("Aggiornamento Contatore", {
+      body: "Vale: " + value,
+      icon: 'icon.png'
+    });
+  }
 });
 
+// Aggiornamento e notifica per il contatore di Filo
 filoRef.on('value', function(snapshot) {
   var value = snapshot.val() || 0;
   document.getElementById('filo-value').innerText = value;
+  if (Notification.permission === 'granted') {
+    new Notification("Aggiornamento Contatore", {
+      body: "Filo: " + value,
+      icon: 'icon.png'
+    });
+  }
 });
 
+// Aggiornamento del totale accumulato (senza notifiche, opzionale)
 accumulatedRef.on('value', function(snapshot) {
   var value = snapshot.val() || 0;
   document.getElementById('accumulated-value').innerText = value;
@@ -54,12 +80,16 @@ document.getElementById('vale-decrease').addEventListener('click', function() {
 document.getElementById('vale-reset').addEventListener('click', function() {
   valeRef.once('value').then(function(snapshot) {
     var currentVal = snapshot.val() || 0;
-    // Aggiungi al totale accumulato
     accumulatedRef.transaction(function(currentTotal) {
       return (currentTotal || 0) + currentVal;
     });
-    // Reset per Vale
     valeRef.set(0);
+    if (Notification.permission === 'granted') {
+      new Notification("Contatore Resettato", {
+        body: "Vale ha resettato il contatore!",
+        icon: 'icon.png'
+      });
+    }
   });
 });
 
@@ -79,27 +109,37 @@ document.getElementById('filo-decrease').addEventListener('click', function() {
 document.getElementById('filo-reset').addEventListener('click', function() {
   filoRef.once('value').then(function(snapshot) {
     var currentVal = snapshot.val() || 0;
-    // Aggiungi al totale accumulato
     accumulatedRef.transaction(function(currentTotal) {
       return (currentTotal || 0) + currentVal;
     });
-    // Reset per Filo
     filoRef.set(0);
+    if (Notification.permission === 'granted') {
+      new Notification("Contatore Resettato", {
+        body: "Filo ha resettato il contatore!",
+        icon: 'icon.png'
+      });
+    }
   });
 });
 
-// Chat functionality
+// Funzionalità Chat
 var chatMessagesDiv = document.getElementById('chat-messages');
 var chatForm = document.getElementById('chat-form');
 var chatInput = document.getElementById('chat-input');
 
-// Ascolta l'aggiunta di nuovi messaggi nella chat
+// Ascolta l'aggiunta di nuovi messaggi
 chatRef.on('child_added', function(snapshot) {
   var messageData = snapshot.val();
   displayChatMessage(messageData);
+  if (Notification.permission === 'granted') {
+    new Notification("Nuovo Messaggio", {
+      body: messageData.text,
+      icon: 'icon.png'
+    });
+  }
 });
 
-// Invio di un messaggio nella chat
+// Invio di un nuovo messaggio
 chatForm.addEventListener('submit', function(e) {
   e.preventDefault();
   var text = chatInput.value.trim();
@@ -113,7 +153,7 @@ chatForm.addEventListener('submit', function(e) {
   }
 });
 
-// Funzione per visualizzare un messaggio della chat
+// Funzione per visualizzare un messaggio della chat con animazione fade-in
 function displayChatMessage(data) {
   var messageDiv = document.createElement('div');
   messageDiv.className = 'message';
@@ -122,6 +162,5 @@ function displayChatMessage(data) {
   messageDiv.innerHTML = '<span class="message-text">' + data.text + '</span>' +
                          '<span class="message-time">' + timeString + '</span>';
   chatMessagesDiv.appendChild(messageDiv);
-  // Scroll automatico verso il fondo della chat
   chatMessagesDiv.scrollTop = chatMessagesDiv.scrollHeight;
 }
