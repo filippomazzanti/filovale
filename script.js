@@ -48,9 +48,9 @@ document.addEventListener("DOMContentLoaded", function() {
     const selectedUser = document.getElementById('user-select').value;
 
     // Verifica PIN per Filo o Vale
-    if (selectedUser === "filo" && pin === "25042004") {
+    if (selectedUser === "filo" && pin === "filo25042004filo") {
       loggedInUser = "Filo";
-    } else if (selectedUser === "vale" && pin === "10062004") {
+    } else if (selectedUser === "vale" && pin === "vale25042004vale") {
       loggedInUser = "Vale";
     } else {
       loginError.style.display = 'block';
